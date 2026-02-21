@@ -222,6 +222,7 @@ dependencies = [
     { name = "tqdm" },
     { name = "transformers", extra = ["torch"] },
     { name = "tyro" },
+    { name = "wandb" },
 ]
 
 [package.dev-dependencies]
@@ -268,6 +269,7 @@ requires-dist = [
     { name = "tqdm", specifier = ">=4.66.1" },
     { name = "transformers", extras = ["torch"], specifier = ">4.51.0" },
     { name = "tyro", specifier = ">=1.0.5" },
+    { name = "wandb", specifier = ">=0.23.0" },
 ]
 
 [package.metadata.requires-dev]

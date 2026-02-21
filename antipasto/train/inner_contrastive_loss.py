@@ -103,6 +103,7 @@ def compute_tv_coherence(
     scale: float = 50.0,
     agg_mode: Literal["mean", "lse", "max"] = "lse",
     lse_temperature: float = 5.0,
+    shift_magnitude: Float[Tensor, "b"] | None = None,
 ) -> tuple[Float[Tensor, "b"], dict]:
     """Total Variation coherence: penalize probability mass redistribution.
     
@@ -130,6 +131,9 @@ def compute_tv_coherence(
         scale: Penalty multiplier
         agg_mode: How to aggregate per-token penalties. lse recommended.
         lse_temperature: τ for LSE. Lower = closer to max.
+        shift_magnitude: Optional per-sample steering magnitude [b].
+            If provided, TV threshold is scaled by
+            1 + |shift| / (mean(|shift|) + 1e-8), detached from graph.
     """
     ref_p = ref_logits.softmax(-1)
     pi_p = pi_logits.softmax(-1)
@@ -141,6 +145,11 @@ def compute_tv_coherence(
     ref_logp = ref_logits.log_softmax(-1)
     H_ref = -(ref_p * ref_logp).sum(-1) + threshold_floor  # [b, t]
     tv_threshold = threshold_frac * H_ref.detach().sqrt()
+
+    if shift_magnitude is not None:
+        shift_abs = shift_magnitude.detach().abs()
+        shift_budget = 1.0 + shift_abs / (shift_abs.mean() + 1e-8)
+        tv_threshold = tv_threshold * shift_budget.unsqueeze(-1)
 
     violation = F.relu(tv_per_token - tv_threshold)
     # Per-token max violation since TV ∈ [0,1]: v = max(0, TV - thresh) ≤ 1 - thresh
@@ -188,6 +197,7 @@ def compute_coherence_loss(
     thresh_floor: float = 0.02,
     agg_mode: Literal["mean", "lse", "max"] = "lse",
     lse_temperature: float = 5.0,
+    shift_magnitude: Float[Tensor, "b"] | None = None,
 ) -> tuple[torch.Tensor, torch.Tensor, dict]:
     """TV-based coherence loss with log1p_squared barrier and LSE aggregation.
     
@@ -202,6 +212,8 @@ def compute_coherence_loss(
         thresh_floor: β in TV threshold = α×√H + β (default 0.02)
         agg_mode: Token aggregation (lse recommended: worst tokens dominate)
         lse_temperature: LSE temperature τ (default 5.0). Lower = closer to max.
+        shift_magnitude: Optional per-sample steering magnitude [b] used to
+            scale TV threshold adaptively.
     
     Returns:
         loss: Per-sample coherence loss [b]
@@ -222,6 +234,7 @@ def compute_coherence_loss(
         scale=scale,
         agg_mode=agg_mode,
         lse_temperature=lse_temperature,
+        shift_magnitude=shift_magnitude,
     )
     
     return loss, degradation, tv_metrics
@@ -426,6 +439,8 @@ def contrastive_steering_loss_with_ref(
     result["cos_pos_ref_mean"] = cos_pos_ref.mean()
     result["cos_neg_ref_mean"] = cos_neg_ref.mean()
     result["cos_product_mean"] = cos_product.mean()
+    result["shift_mag_pos"] = (cos_pos_ref * mag_pos).abs()  # [b]
+    result["shift_mag_neg"] = (cos_neg_ref * mag_neg).abs()  # [b]
 
     # Subspace focus weighting (how much delta energy is in loss subspace)
     if delta_pos_norm_full is not None and delta_neg_norm_full is not None:

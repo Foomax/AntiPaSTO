@@ -289,6 +289,8 @@ def compute_batch_loss(
     
     proj_losses = {basis_module_path: loss_dict["loss_proj"]}
     proj_metrics = {basis_module_path: loss_dict}
+    shift_mag_pos = loss_dict["shift_mag_pos"]
+    shift_mag_neg = loss_dict["shift_mag_neg"]
     
     # Note: No flip logic here. Antisymmetric loss formula already handles direction:
     # dot_delta = delta_pos · delta_neg, want negative (antiparallel)
@@ -306,32 +308,36 @@ def compute_batch_loss(
     coh_losses = {}
     coh_degradations = {}
     coh_metrics_all = {}
+    coh_term_losses = {}
+    coh_term_degradations = {}
+    coh_term_metrics = {}
+    coh_shared_metrics = {}
     
     # Precompute ref logits for coherence if needed
     ref_logits_cho = outputs_ref.logits[:, :-1][::2].detach()
     ref_logits_rej = outputs_ref.logits[:, :-1][1::2].detach()
     
-    for coef in [-1.0, 1.0]:
-        pi_logp = outputs_pi[coef].logits[:, :-1].log_softmax(-1)
-        pi_label_logp = pi_logp.gather(2, labels).squeeze(-1)
-        pi_cho_label_logp = pi_label_logp[::2]
-        pi_rej_label_logp = pi_label_logp[1::2]
-        
-        # Coherence for the "positive" side of this coefficient
-        if coef > 0:
-            ref_coherence = ref_cho_label_logp
-            pi_coherence = pi_cho_label_logp
-            ref_logits = ref_logits_cho
-            pi_logits = outputs_pi[coef].logits[:, :-1][::2]
-        else:
-            ref_coherence = ref_rej_label_logp
-            pi_coherence = pi_rej_label_logp
-            ref_logits = ref_logits_rej
-            pi_logits = outputs_pi[coef].logits[:, :-1][1::2]
-        
+    pi_logp_pos = outputs_pi[+1.0].logits[:, :-1].log_softmax(-1)
+    pi_label_logp_pos = pi_logp_pos.gather(2, labels).squeeze(-1)
+    pi_cho_label_logp_pos = pi_label_logp_pos[::2]
+    pi_rej_label_logp_pos = pi_label_logp_pos[1::2]
+
+    pi_logp_neg = outputs_pi[-1.0].logits[:, :-1].log_softmax(-1)
+    pi_label_logp_neg = pi_logp_neg.gather(2, labels).squeeze(-1)
+    pi_cho_label_logp_neg = pi_label_logp_neg[::2]
+    pi_rej_label_logp_neg = pi_label_logp_neg[1::2]
+
+    def _compute_coh_term(
+        name: str,
+        ref_label_logp: torch.Tensor,
+        pi_label_logp: torch.Tensor,
+        ref_logits: torch.Tensor,
+        pi_logits: torch.Tensor,
+        shift_magnitude: torch.Tensor,
+    ) -> None:
         coh_loss, coh_deg, coh_metrics = compute_coherence_loss(
-            ref_label_logp=ref_coherence,
-            pi_label_logp=pi_coherence,
+            ref_label_logp=ref_label_logp,
+            pi_label_logp=pi_label_logp,
             mask=mask_logp,
             scale=effective_coh_weight,
             ref_logits=ref_logits,
@@ -339,20 +345,99 @@ def compute_batch_loss(
             coh_thresh_frac=config.coh_thresh,
             agg_mode="mean",
             lse_temperature=config.coh_lse_temperature,
+            shift_magnitude=shift_magnitude,
         )
-        
-        coh_losses[coef] = coh_loss
-        coh_degradations[coef] = coh_deg
-        coh_metrics_all[coef] = coh_metrics
+        coh_term_losses[name] = coh_loss
+        coh_term_degradations[name] = coh_deg
+        coh_term_metrics[name] = coh_metrics
+
+    _compute_coh_term(
+        "cho_pos",
+        ref_cho_label_logp,
+        pi_cho_label_logp_pos,
+        ref_logits_cho,
+        outputs_pi[+1.0].logits[:, :-1][::2],
+        shift_mag_pos,
+    )
+    _compute_coh_term(
+        "cho_neg",
+        ref_cho_label_logp,
+        pi_cho_label_logp_neg,
+        ref_logits_cho,
+        outputs_pi[-1.0].logits[:, :-1][::2],
+        shift_mag_neg,
+    )
+    _compute_coh_term(
+        "rej_pos",
+        ref_rej_label_logp,
+        pi_rej_label_logp_pos,
+        ref_logits_rej,
+        outputs_pi[+1.0].logits[:, :-1][1::2],
+        shift_mag_pos,
+    )
+    _compute_coh_term(
+        "rej_neg",
+        ref_rej_label_logp,
+        pi_rej_label_logp_neg,
+        ref_logits_rej,
+        outputs_pi[-1.0].logits[:, :-1][1::2],
+        shift_mag_neg,
+    )
+
+    coh_case_pos = coh_term_losses["cho_pos"] + coh_term_losses["rej_neg"]
+    coh_case_neg = coh_term_losses["rej_pos"] + coh_term_losses["cho_neg"]
+    coh_base = torch.minimum(coh_case_pos, coh_case_neg)
+    coh_gap = torch.maximum(coh_case_pos, coh_case_neg) - coh_base
+    coh_asym_total = 2.0 * coh_base * config.asym_coh_ratio + coh_gap
+
+    # combine_dual_coef_losses expects two coherence terms and sums them.
+    # Split asymmetric coherence evenly so total coherence remains coh_asym_total.
+    coh_losses[+1.0] = 0.5 * coh_asym_total
+    coh_losses[-1.0] = 0.5 * coh_asym_total
+
+    coh_degradations[+1.0] = 0.5 * (
+        coh_term_degradations["cho_pos"] + coh_term_degradations["rej_pos"]
+    )
+    coh_degradations[-1.0] = 0.5 * (
+        coh_term_degradations["cho_neg"] + coh_term_degradations["rej_neg"]
+    )
+
+    def _mean_metric_dict(lhs: dict, rhs: dict) -> dict:
+        out = {}
+        for key in lhs.keys():
+            lval = lhs[key]
+            rval = rhs[key]
+            if torch.is_tensor(lval) and torch.is_tensor(rval):
+                out[key] = 0.5 * (lval + rval)
+            else:
+                out[key] = 0.5 * (float(lval) + float(rval))
+        return out
+
+    coh_metrics_all[+1.0] = _mean_metric_dict(
+        coh_term_metrics["cho_pos"], coh_term_metrics["rej_pos"]
+    )
+    coh_metrics_all[-1.0] = _mean_metric_dict(
+        coh_term_metrics["cho_neg"], coh_term_metrics["rej_neg"]
+    )
+
+    coh_shared_metrics = {
+        "coh_cho_pos": coh_term_losses["cho_pos"].mean().detach().cpu().item(),
+        "coh_cho_neg": coh_term_losses["cho_neg"].mean().detach().cpu().item(),
+        "coh_rej_pos": coh_term_losses["rej_pos"].mean().detach().cpu().item(),
+        "coh_rej_neg": coh_term_losses["rej_neg"].mean().detach().cpu().item(),
+        "coh_case_pos": coh_case_pos.mean().detach().cpu().item(),
+        "coh_case_neg": coh_case_neg.mean().detach().cpu().item(),
+        "coh_base": coh_base.mean().detach().cpu().item(),
+        "coh_gap": coh_gap.mean().detach().cpu().item(),
+        "coh_asym_ratio": float(config.asym_coh_ratio),
+        "coh_asym_total": coh_asym_total.mean().detach().cpu().item(),
+    }
     
     # =========================================================================
     # STEP 5: Compute delta_logp_change ONCE (for monotonic ordering)
     # =========================================================================
     # Need logp for both chosen and rejected from each coefficient (bfloat16 fine for logprobs)
-    pi_cho_label_logp_pos = outputs_pi[+1.0].logits[:, :-1].log_softmax(-1).gather(2, labels).squeeze(-1)[::2]
-    pi_rej_label_logp_pos = outputs_pi[+1.0].logits[:, :-1].log_softmax(-1).gather(2, labels).squeeze(-1)[1::2]
-    pi_cho_label_logp_neg = outputs_pi[-1.0].logits[:, :-1].log_softmax(-1).gather(2, labels).squeeze(-1)[::2]
-    pi_rej_label_logp_neg = outputs_pi[-1.0].logits[:, :-1].log_softmax(-1).gather(2, labels).squeeze(-1)[1::2]
+    # Reuse already computed label logprobs from coherence step.
     
     delta_logp_pos = compute_delta_logp_change(
         pi_cho_label_logp_pos, pi_rej_label_logp_pos,
@@ -451,6 +536,9 @@ def compute_batch_loss(
                     info[f"coh_{metric_name}"] = metric_val.cpu().item()
                 else:
                     info[f"coh_{metric_name}"] = metric_val
+
+            for metric_name, metric_val in coh_shared_metrics.items():
+                info[metric_name] = metric_val
             
             # Add metadata
             if scheduler is not None:
