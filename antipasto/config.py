@@ -85,14 +85,14 @@ class TrainingConfig:
 
     n_epochs: int = 30
 
-    lr: float = 0.002
+    lr: float = 5e-4
     """Learning rate.
 
     Empirically, Cayley rotations tend to tolerate higher LR than LoRA/DoRA.
     This repo's default matches a strong run on Qwen3-14B.
     """
 
-    wd: float = 1e-4
+    wd: float = 1e-5
     """Weight decay"""
 
     n_logs: int = 10
@@ -173,7 +173,7 @@ class TrainingConfig:
     - taskdiff_x_write_x_notlogits: Task ∩ write ∩ (lm_head^⊥)
     """
 
-    loss_subspace_rank: Optional[int] = 4
+    loss_subspace_rank: Optional[int] = 8
     """Rank (top-k) for loss subspace.
 
     If None (default), select rank automatically via `loss_subspace_energy_frac`
@@ -189,7 +189,7 @@ class TrainingConfig:
     k such that cumulative energy >= this fraction. 60% was used in MSRS paper
     """
 
-    loss_layer_frac: float = 0.5
+    loss_layer_frac: float = 0.9
     """Depth fraction (0-1) at which to apply representation loss.
     
     The loss is computed at a single layer: int(loss_layer_frac * num_hidden_layers).
@@ -256,6 +256,20 @@ class TrainingConfig:
     - gemma1b: coh_thresh=0.8 → 16.9 F1, no_coh → 9.3 F1 (+7.6 improvement)
     - Pattern: moderate-loose (0.8-0.9) > tight (0.5) > too_loose (no_coh) > too_tight (0.0)
     - Recommend: coh_thresh=0.9 (default)
+    """
+
+    asym_coh_ratio: float = 1.5
+    """Asymmetric coherence ratio for reinforced-vs-steered assignments.
+
+    Let case_pos = coh_cho_pos + coh_rej_neg and case_neg = coh_rej_pos + coh_cho_neg.
+    We combine as: loss_coh = 2 * min(case_pos, case_neg) * asym_coh_ratio + gap,
+    where gap = max(case_pos, case_neg) - min(case_pos, case_neg).
+
+    Interpretation:
+    - steered side always gets weight 1
+    - reinforced side gets weight (2 * ratio - 1)
+    - ratio=1.0 recovers symmetric coherence
+    - ratio=1.5 gives reinforced weight 2x (default)
     """
 
     coh_barrier_mode: Literal["log1p_squared"] = "log1p_squared"
@@ -526,6 +540,7 @@ class TrainingConfig:
 
             'dataset_name': 'ds', 'n_last_tokens': 'tok', 
             'coh_weight': 'cohW', 'coh_thresh': 'cohK',
+            'asym_coh_ratio': 'cohR',
             'mono_margin': 'monoM', 'mono_weight': 'monoW',
             'antisym_margin': 'amrg',
             'max_rotation_angle': 'maxR',
