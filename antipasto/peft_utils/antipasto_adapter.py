@@ -279,7 +279,7 @@ class AntiPaSTOLayer(BaseTunerLayer):
             """With contrastive steering coeff=+1 and coeff=-1 produce identical outputs initially, so gradients are zero. Small random init is important for learning as it breaks symmetry."""
             x = torch.zeros(*args, **kwargs)
             # Option B: Draw from skew-symmetric distribution directly
-            nn.init.trunc_normal_(x, std=0.003)
+            nn.init.trunc_normal_(x, std=1e-4)
             x = x - x.T
             return x
         
