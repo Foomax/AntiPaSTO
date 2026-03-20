@@ -60,7 +60,7 @@ def load_model(model_id, quantization_type="none"):
     base_model = AutoModelForCausalLM.from_pretrained(
         model_id,
         dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float16,
-        device_map="cuda:0",
+        device_map="auto",
         config=config,
         **model_kwargs
     )

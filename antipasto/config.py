@@ -46,7 +46,7 @@ class TrainingConfig:
     seed: int = 42
     """Random seed for reproducibility (layer selection, dim selection, training dynamics)."""
     
-    init_n_samples: int = 2000
+    init_n_samples: int = 3000
     """Number of samples for WANDA-style dimension selection and subspace computation.
     
     Higher = more stable activation statistics, but slower init.
@@ -61,7 +61,7 @@ class TrainingConfig:
     model_name: str = "google/gemma-3-12b-it"
     quantization_type: Literal["4bit", "8bit", "none"] = "none"
 
-    n_modules: int = 256
+    n_modules: int = 512
     """Total number of layer×module combinations to select (by gradient importance).
     
     Examples with n_modules=5:
@@ -86,10 +86,10 @@ class TrainingConfig:
     Explicit list: ["down_proj", "o_proj"] - only these module suffixes are candidates.
     """
 
-    bs: int = 14
+    bs: int = 32
     """Batch size"""
 
-    n_epochs: int = 30
+    n_epochs: int = 5
 
     lr: float = 5e-4
     """Learning rate.
@@ -98,7 +98,7 @@ class TrainingConfig:
     This repo's default matches a strong run on Qwen3-14B.
     """
 
-    wd: float = 1e-5
+    wd: float = 1e-6
     """Weight decay"""
 
     n_logs: int = 10
@@ -119,13 +119,13 @@ class TrainingConfig:
     early_stop_patience: int = 16
     """Stop if val loss doesn't improve for N validation checks. 0 = disabled (recommended with one-cycle scheduler)."""
 
-    early_stop_min_delta: float = 0.00001
+    early_stop_min_delta: float = 0.0001
     """Min relative improvement to count as 'better' (0.001 = 0.1%). Filters noise without being too strict."""
 
     warmup_pct: float = 0.1
     """Fraction of training for warmup. Early stopping is disabled during warmup."""
 
-    r: int = 64
+    r: int = 128
     """Adapter rank (ideally should be proportional to hidden dim)"""
 
     rot_u: bool = False
@@ -241,7 +241,7 @@ class TrainingConfig:
     If enabling, use loose threshold (0.8-2.0 not 0.4). Currently disabled by default.
     """
 
-    coh_weight: float = 10.0
+    coh_weight: float = 5.0
     """Coherence loss scaling.
     
     With log_barrier: scale=50 gives penalty=18 at TV=0.55, → ∞ at TV=1.0
@@ -755,6 +755,14 @@ default_configs = {
     ),
 
     # google/gemma-3-27b-it
+    # add gemma4b
+    "32b": (
+        "Gemma 3 12B on 80GB GPU",
+        TrainingConfig(
+            model_name="Qwen/Qwen3-32B",
+            # bs=14,
+        ),
+    ),
 
 
 }

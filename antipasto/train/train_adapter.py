@@ -1062,12 +1062,19 @@ def train_epoch(
 
         if step % config.grad_accum_steps == 0:
             # Gradient clipping
-            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            
+            grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+            # Skip optimizer step if gradients are NaN (prevents param corruption)
+            if not torch.isfinite(grad_norm):
+                logger.warning(f"NaN/Inf grad_norm at step {step}, skipping optimizer step")
+                opt.zero_grad()
+                model.zero_grad()
+                continue
+
             opt.step()
             scheduler.step()
             opt_step += 1  # Increment optimizer step counter
-            
+
             opt.zero_grad()
             model.zero_grad()
 
