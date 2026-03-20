@@ -1526,7 +1526,9 @@ Action: Tell a white lie"""
     batch = tokenizer.apply_chat_template(
         messages,
         return_tensors="pt",
+        # add_generation_prompt=not continue_final_message,
         continue_final_message=continue_final_message,
+        # enable_thinking=True,
         return_dict=True,
         return_attention_mask=True,
     ).to(model.device)
@@ -1629,7 +1631,7 @@ def validate_prompt_elicitation(model, tokenizer, choice_ids, config: TrainingCo
 
 @torch.no_grad()
 def generate_example_outputs(
-    model, tokenizer, choice_ids, coeffs=[-1, 0, 1], max_new_tokens=64, scale_adapter_fn=None,
+    model, tokenizer, choice_ids, coeffs=[-1, 0, 1], max_new_tokens=64, scale_adapter_fn=None, question=None
 ):
     """Generate example outputs at different steering coefficients to show training progress.
 
@@ -1652,14 +1654,14 @@ def generate_example_outputs(
     for coeff in coeffs:
         with scale_adapter_fn(coeff):
             q, s, score, sample_nll, pmass = generate_example_output(
-                model, tokenizer, choice_ids, max_new_tokens=max_new_tokens
+                model, tokenizer, choice_ids, max_new_tokens=max_new_tokens, question=question,
             )
         results.append((coeff, s, score, sample_nll, pmass))
 
     return results
 
 
-def log_example_outputs(model, tokenizer, choice_ids, coeffs, title, scale_adapter_fn=None, wandb_run=None, save_folder=None):
+def log_example_outputs(model, tokenizer, choice_ids, coeffs, title, scale_adapter_fn=None, wandb_run=None, save_folder=None, question=None):
     """Helper to generate and log example outputs.
     
     Logs to:
@@ -1668,7 +1670,7 @@ def log_example_outputs(model, tokenizer, choice_ids, coeffs, title, scale_adapt
     3. wandb.summary (structured, directly accessible via API)
     """
     s = "\n" + "=" * 90 + f"\n{title}\n" + "=" * 90 + "\n"
-    examples = generate_example_outputs(model, tokenizer, choice_ids, coeffs=coeffs, scale_adapter_fn=scale_adapter_fn)
+    examples = generate_example_outputs(model, tokenizer, choice_ids, coeffs=coeffs, scale_adapter_fn=scale_adapter_fn, question=None,)
     for coeff, text, score, seq_nll, pmass in examples:
         s += f"coeff={coeff:+.1f} | score={score:+.3f} | seq_nll={seq_nll:+.3f} | pmass={pmass:.3f} | \n{fill(text, width=120)}\n"
     s += "=" * 90 + "\n"
@@ -2012,6 +2014,18 @@ def train_model(config: TrainingConfig):
         scale_adapter_fn=scale_adapter_fn,
         wandb_run=wandb_run,
         save_folder=save_folder,
+        question=QUESTION1,
+    )
+    log_example_outputs(
+        model,
+        tokenizer,
+        choice_ids,
+        [-1, 0, 1],
+        "BEFORE TRAINING - Example outputs at different steering coefficients:",
+        scale_adapter_fn=scale_adapter_fn,
+        wandb_run=wandb_run,
+        save_folder=save_folder,
+        question=QUESTION2,
     )
 
     # Training loop with early stopping
@@ -2058,6 +2072,17 @@ def train_model(config: TrainingConfig):
                 f"MID-TRAINING (epoch {epoch}) - Example outputs:",
                 scale_adapter_fn=scale_adapter_fn,
                 save_folder=save_folder,
+                QUESTION=QUESTION1,
+            )
+            log_example_outputs(
+                model,
+                tokenizer,
+                choice_ids,
+                [-1, 0, 1],
+                f"MID-TRAINING (epoch {epoch}) - Example outputs:",
+                scale_adapter_fn=scale_adapter_fn,
+                save_folder=save_folder,
+                QUESTION=QUESTION2,
             )
 
     # if early_stopped and config.save_checkpoints:
@@ -2090,6 +2115,19 @@ def train_model(config: TrainingConfig):
         "AFTER TRAINING - Example outputs at different steering coefficients:",
         scale_adapter_fn=scale_adapter_fn,
         wandb_run=wandb_run,
+        Question=QUESTION1,
+        save_folder=save_folder,
+    )
+    # Show examples after training (after auto-flip so TSV matches saved model)
+    log_example_outputs(
+        model,
+        tokenizer,
+        choice_ids,
+        [-1, 0, 1],
+        "AFTER TRAINING - Example outputs at different steering coefficients:",
+        scale_adapter_fn=scale_adapter_fn,
+        wandb_run=wandb_run,
+        Question=QUESTION2,
         save_folder=save_folder,
     )
 

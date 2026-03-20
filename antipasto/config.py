@@ -86,19 +86,19 @@ class TrainingConfig:
     Explicit list: ["down_proj", "o_proj"] - only these module suffixes are candidates.
     """
 
-    bs: int = 32
+    bs: int = 64
     """Batch size"""
 
-    n_epochs: int = 5
+    n_epochs: int = 2
 
-    lr: float = 5e-4
+    lr: float = 6e-4
     """Learning rate.
 
     Empirically, Cayley rotations tend to tolerate higher LR than LoRA/DoRA.
     This repo's default matches a strong run on Qwen3-14B.
     """
 
-    wd: float = 1e-6
+    wd: float = 1e-7
     """Weight decay"""
 
     n_logs: int = 10
@@ -125,7 +125,7 @@ class TrainingConfig:
     warmup_pct: float = 0.1
     """Fraction of training for warmup. Early stopping is disabled during warmup."""
 
-    r: int = 128
+    r: int = 512
     """Adapter rank (ideally should be proportional to hidden dim)"""
 
     rot_u: bool = False

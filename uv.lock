@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'linux'",
@@ -209,6 +209,7 @@ dependencies = [
     { name = "gguf" },
     { name = "jaxtyping" },
     { name = "loguru" },
+    { name = "matplotlib" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pandas" },
@@ -258,6 +259,7 @@ requires-dist = [
     { name = "gguf", specifier = ">=0.13.0" },
     { name = "jaxtyping", specifier = ">=0.3.2" },
     { name = "loguru", specifier = ">=0.7.3" },
+    { name = "matplotlib", specifier = ">=3.10.7" },
     { name = "numpy", specifier = ">=1.26.4" },
     { name = "pandas", specifier = ">=2.3.2" },
     { name = "peft", git = "https://github.com/huggingface/peft.git?rev=41091ecd31abc84bda9e899c4e80ec96f3fa99b2" },

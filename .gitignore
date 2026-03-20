@@ -8,6 +8,7 @@ orcidlink.sty
 outputs/
 wandb/
 .anycache/
+logs/
 
 # project
 __pycache__/
