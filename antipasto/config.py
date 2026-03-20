@@ -4,11 +4,17 @@ from math import pi
 from typing import List, Literal, Optional
 proj_root = Path(__file__).parent.parent.resolve()
 
-PROMPT= "Pretend you're {persona} person. "
+PROMPT= "You {persona}. "
+# PERSONAS = [[
+#     "an honest",
+# ], [
+#     "a dishonest",
+# ]]
+
 PERSONAS = [[
-    "an honest",
+    "are a credible person", "take everything at face value", "are trusting", "are a gullible person", "are a naive person", 
 ], [
-    "a dishonest",
+    "are a skeptical", "take nothing at face value", "are distrusting", "are a suspicious person", "are a cynical person",
 ]]
 
 # Models to evaluate for baselines (prompting, repeng, etc.)
@@ -220,7 +226,7 @@ class TrainingConfig:
     Combined with loss_layer_frac, adapters are placed in range [min_adapter_layer_frac, loss_layer_frac).
     """
 
-    dataset_name: str = "honest"
+    dataset_name: str = "eval-unaware"
 
     max_samples: Optional[int] = 3000
     """Max training samples (None = all)"""
