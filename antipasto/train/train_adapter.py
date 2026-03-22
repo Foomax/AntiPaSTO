@@ -2072,7 +2072,7 @@ def train_model(config: TrainingConfig):
                 f"MID-TRAINING (epoch {epoch}) - Example outputs:",
                 scale_adapter_fn=scale_adapter_fn,
                 save_folder=save_folder,
-                QUESTION=QUESTION1,
+                question=QUESTION1,
             )
             log_example_outputs(
                 model,
@@ -2082,7 +2082,7 @@ def train_model(config: TrainingConfig):
                 f"MID-TRAINING (epoch {epoch}) - Example outputs:",
                 scale_adapter_fn=scale_adapter_fn,
                 save_folder=save_folder,
-                QUESTION=QUESTION2,
+                question=QUESTION2,
             )
 
     # if early_stopped and config.save_checkpoints:

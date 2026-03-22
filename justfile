@@ -4,6 +4,7 @@ default:
     #!/bin/bash
     set -x
 
+    uv run python nbs/train.py 32b --model_name=Qwen/Qwen3-8B --seed=44
     uv run python nbs/train.py 32b --model_name=Qwen/Qwen3-32B --seed=44
     uv run python nbs/train.py 32b --model_name=Qwen/QwQ-32B --seed=44
     uv run python nbs/train.py 32b --model_name=Qwen/Qwen3-32B --init_n_samples=10000 --max_samples=10000 --n_modules=512 --bs=32 --n_epochs=60 --wd=1e-7 --r=512

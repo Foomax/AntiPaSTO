@@ -148,7 +148,7 @@ def run_steering_demo(
     coeffs=[-1, 0, 1],
     max_new_tokens: int = 48,
     max_text_len: int = 40000,
-    skip_special_tokens=True,
+    skip_special_tokens=False,
     model_name: str = None,
     warn_low_pmass: bool = False,
     bool_q=True,
