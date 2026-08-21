@@ -9,6 +9,8 @@
 
 *Serving up data-efficient inner alignment, one satisfying rotation at a time.*
 
+Accepted to the CoLoRAI workshop, ICML 2026.
+
 > Gradient-based honesty steering trained as an adapter on the model's own representations, not outputs. Human input: two contrasting words, no preference labels.
 
 **How it works:** Train a single adapter (~1 hour on Gemma-3-1B). At inference, dial the steering coefficient: +1 for more honest, -1 for less, 0 for baseline. One adapter, bidirectional control.
@@ -22,6 +24,17 @@ Applications:
 
 
 ![Bidirectional control](docs/img/fig_bidirectional_demo.svg)
+
+## Results
+
+Train on 800 honesty persona pairs, test on [DailyDilemmas](https://arxiv.org/abs/2410.02683), an external benchmark of 1,360 moral dilemmas across 9 value dimensions, built independently of this work. gemma-3-1b-it, n=3 seeds.
+
+| Method | Steer F1 | Flip% | Arb | Focus | Coh |
+|:-------|---------:|------:|----:|------:|----:|
+| AntiPaSTO | 14.1±3.3 | 13% | 0% | 10.5 | 0.6 |
+| Prompting | 4.5 | 12.7% | 0% | — | -0.09 |
+
+3.1x the Steering F1 of prompting, with fewer side effects. Full tables, ablations, and cross-model results in the [paper](https://arxiv.org/abs/2601.07473).
 
 ## Quick Start
 
