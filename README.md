@@ -27,14 +27,16 @@ Applications:
 
 ## Results
 
-Train on 800 honesty persona pairs, test on [DailyDilemmas](https://arxiv.org/abs/2410.02683), an external benchmark of 1,360 moral dilemmas across 9 value dimensions, built independently of this work. gemma-3-1b-it, n=3 seeds.
+Train on 800 honesty persona pairs, test on [DailyDilemmas](https://arxiv.org/abs/2410.02683), an external benchmark of 1,360 moral dilemmas built independently of this work. Gemma-3-1B, n=3 seeds.
 
-| Method | Steer F1 | Flip% | Arb | Focus | Coh |
-|:-------|---------:|------:|----:|------:|----:|
-| AntiPaSTO | 14.1±3.3 | 13% | 0% | 10.5 | 0.6 |
-| Prompting | 4.5 | 12.7% | 0% | — | -0.09 |
+| Method | Steer F1 | Tgt% | Wrong% | Arb% | Pmass |
+|:-------|---------:|-----:|-------:|-----:|------:|
+| AntiPaSTO | **31.2**±5.3 | 29.9 | 1.9 | 47.0 | 0.95 |
+| Eng. Prompt | 13.0 | | | | |
+| Prompting | 4.5 | 10.0 | 1.3 | 13.4 | 0.99 |
+| ActAdd | 0.0 | 0.0 | 0.0 | 0.0 | 0.99 |
 
-3.1x the Steering F1 of prompting, with fewer side effects. Full tables, ablations, and cross-model results in the [paper](https://arxiv.org/abs/2601.07473).
+6.9x the Steering F1 of prompting, and it wins on 5 of 6 tested value axes. ActAdd is activation addition; Eng. Prompt is an engineered prompt following [AxBench](https://arxiv.org/abs/2501.17148). Full tables, ablations, and cross-model results in the [paper](https://arxiv.org/abs/2601.07473).
 
 ## Quick Start
 
