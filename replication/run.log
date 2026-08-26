@@ -1,0 +1,56 @@
+== 2026-08-26T04:40:26+08:00 start wassname/antipasto@5e0f8517f360751220bf0348586952ff0e240907 (manual procedure per 3090/02, uv sync)
+5e0f8517f360751220bf0348586952ff0e240907 2026-08-21 Correct the results table to the v5 paper numbers
+INSTALL-EXIT 0 (uv sync --all-groups, 162 packages)
+torch 2.9.1+cu128 cuda 12.8 NVIDIA GeForce RTX 3090
+transformers 4.57.1 peft 0.17.2.dev0
+HF user: devmachine2
+GEMMA ACCESS FAIL GatedRepoError 403 Client Error. (Request ID: Root=1-6a8e0438-2093a0aa6995451f1f8debdb;19432816-94b3-49a3-b39d-3bb9bd19e36c)
+
+Cannot access gated repo for url https://huggingface.co/google/gemma-3-1b-it/resolve/main/config.json.
+Access to model google/gemma-3-1b-it is restricted and you are not in the authorized l
+== 2026-08-26T05:08:38+08:00 smoke test: uv run pytest tests/test_train.py::test_train_rnd -v
+============================= test session starts ==============================
+platform linux -- Python 3.13.13, pytest-9.0.1, pluggy-1.6.0 -- /home/user/alignment-literature-meta-analysis/replication/experiments/antipasto-self-supervised-honesty-steering-via-a--wassname/src/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/user/alignment-literature-meta-analysis/replication/experiments/antipasto-self-supervised-honesty-steering-via-a--wassname/src
+configfile: pyproject.toml
+plugins: typeguard-4.4.4, jaxtyping-0.3.3, anyio-4.11.0
+collecting ... collected 1 item
+
+tests/test_train.py::test_train_rnd PASSED                               [100%]
+
+======================== 1 passed in 205.02s (0:03:25) =========================
+
+real	3m25.573s
+user	2m10.843s
+sys	0m11.384s
+== 2026-08-26T05:12:29+08:00 smoke test PASSED (3m25s, peak 3.7GB). BLOCKED: HF token 'devmachine2' has not accepted Gemma licence -> 403 on google/gemma-3-1b-it (and gemma-3-270m-it). Waiting for user to accept licence before seed-42 run. DailyDilemmas dataset cached.
+== 2026-08-26T05:23:24+08:00 seed 42: uv run python nbs/train.py gemma1b-24gb
+== 2026-08-26T06:13:24+08:00 seed42 EXIT 143 after 50 min
+== 2026-08-26T06:13:45+08:00 seed-42 attempt 1 killed by me (SIGTERM): xet download of model.safetensors hung at 1,999,811,208 bytes, no writes/socket traffic for 38 min. Fix: HF_HUB_DISABLE_XET=1, clear .incomplete blob, pre-download, relaunch.
+== 2026-08-26T06:19:43+08:00 seed 42 attempt 2: uv run python nbs/train.py gemma1b-24gb (HF_HUB_DISABLE_XET=1, weights pre-cached)
+== 2026-08-26T07:07:22+08:00 seed42 EXIT 0 after 47 min
+== 2026-08-26T07:07:51+08:00 seed 43: uv run python nbs/train.py gemma1b-24gb --seed 43
+== 2026-08-26T07:55:15+08:00 seed43 EXIT 0 after 47 min
+== 2026-08-26T07:56:40+08:00 baselines (--quick equivalent) via ../baselines_gemma1b.py wrapper: scripts unmodified, model list pointed at google/gemma-3-1b-it (as shipped --quick evaluates Qwen3-0.6B; repeng script loops all 10 models in quick mode)
+== 2026-08-26T07:57:46+08:00 baseline prompting EXIT 0 after 1 min
+== 2026-08-26T07:58:22+08:00 baseline repeng EXIT 1 after 0 min
+== 2026-08-26T07:58:58+08:00 baseline repeng retry with PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True (first attempt OOM in calc_nll: 4.38GiB alloc with 8.98GiB reserved-unallocated)
+== 2026-08-26T07:59:48+08:00 baseline repeng EXIT 0 after 0 min
+== 2026-08-26T08:01:07+08:00 FULL baselines (1360 dilemmas) on gemma-3-1b-it via wrapper (--quick subset has no arbitrary-cluster dilemmas -> Steer F1 is NaN by construction)
+== 2026-08-26T08:01:58+08:00 baseline prompting FULL EXIT 1 after 0 min
+== 2026-08-26T08:02:19+08:00 baseline repeng FULL EXIT 0 after 0 min
+== 2026-08-26T08:03:20+08:00 FULL baselines retry: wrapper forces eval batch_size=8 (script floors at 32 -> 9.97GiB logits OOM on 24GB); removed stale repeng cache outputs/baselines/repeng/google_gemma-3-1b-it.parquet (repeng script names quick cache with the full-run filename)
+== 2026-08-26T08:06:30+08:00 baseline prompting FULL EXIT 0 after 3 min
+== 2026-08-26T08:09:04+08:00 baseline repeng FULL EXIT 0 after 2 min
+== 2026-08-26T08:09:42+08:00 seed 44: uv run python nbs/train.py gemma1b-24gb --seed 44
+== 2026-08-26T08:57:21+08:00 seed44 EXIT 0 after 47 min
+== 2026-08-26T08:58:00+08:00 FOLLOW-UP 1 (outside protocol budget, not part of ledger): paper-v5 hyperparameters: nbs/train.py gemma1b-24gb --lr 1e-3 --r 128 --n_modules 64 --max_samples 800 --bs 8 --seed 42
+== RUN-EXIT 0 after 229 min (smoke 05:08 -> seed44 done 08:57; includes 50 min lost to hung xet download)
+== VERDICT
+[MEASURED] AntiPaSTO Steer F1, Gemma-3-1B, DailyDilemmas 1360, seeds 42/43/44 = 1.8 / 0.4 / 3.8 (mean 2.0 +/- 1.7) vs claimed 31.2 +/- 5.3 (tolerance [25.9, 36.5]) -> magnitude NOT reproduced at pinned commit 5e0f851.
+[MEASURED] Same-model full baselines: prompting 13.5, repeng/ActAdd 0.0. Observed ordering prompting > AntiPaSTO > ActAdd -> ordering NOT reproduced; the ActAdd = 0 sub-claim reproduces.
+[INFERRED] Primary suspect is config drift, not the method: the shipped gemma1b-24gb preset (lr 5e-4, r 64, n_modules 256, 1033 pairs, bs 24) is not the paper-v5 configuration (lr 1e-3, r 128, n_modules 64, 800 pairs, bs 8), which appears nowhere in the repo history. Seed noise is excluded: adapters from different seeds agree at cos-sim 0.68-0.88.
+[UNRESOLVED] Whether the paper hyperparameters recover ~31 (follow-up run launched outside the budget); engineered-prompt baseline not run.
+Pipeline: installs OK from uv.lock, smoke test OK, 5 environment fixes recorded, 229 of 240 min used (50 lost to a hung xet download).
+== 2026-08-26T09:33:50+08:00 FOLLOW-UP 1 EXIT 1 after 35 min

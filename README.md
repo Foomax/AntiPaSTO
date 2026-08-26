@@ -1,180 +1,26 @@
-# 🍝 AntiPaSTO: Self-Supervised Honesty Steering via Anti-Parallel Representations
+# Replication fork of `wassname/antipasto` — AntiPaSTO: Self-Supervised Honesty Steering via Anti-Parallel Representations
 
-[![arXiv](https://img.shields.io/badge/arXiv-2601.07473-b31b1b.svg)](https://arxiv.org/abs/2601.07473)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![BlogPost](https://img.shields.io/badge/BlogPost-Read%20More-blue.svg)](https://www.lesswrong.com/posts/nWiwv4GN8aYqpnZKE/antipasto-self-supervised-value-steering-for-debugging)
+This is a fork made for an independent replication on one RTX 3090. Branch `replication-3090` starts at the authors' commit `5e0f851` (pinned; `upstream` remote = the original repo). Nothing here is a contribution to the original project — no PRs, no issues; the authors' README is preserved as `README.upstream.md`. Everything we added lives in `replication/` plus the minimal environment fixes recorded below.
 
-**Anti-Pa**rallel **S**ubspace **T**raining for **O**rdered steering.
+# human
 
+**Claim being checked.** AntiPaSTO trains a small adapter inside Gemma‑3‑1B so a dial makes the model more (+1) or less (−1) honest, from just the words "honest"/"dishonest". The paper reports a steering score of **31.2 ± 5.3** on 1,360 unseen moral dilemmas, beating prompting (4.5) and the classic "add a vector" method (0.0).
 
-*Serving up data-efficient inner alignment, one satisfying rotation at a time.*
+**What happened.** The shipped code runs perfectly and, on the headline model, scores **2.0 ± 1.7** over three seeds. Plain prompting scored 13.5 and an engineered prompt 17.9 — both beat it. Only "ActAdd = 0" held. The three seeds learned nearly the same adapter (cosine 0.7–0.9), so this isn't bad luck.
 
-Accepted to the CoLoRAI workshop, ICML 2026.
+**Why, as far as we can tell.** The repo's Gemma‑1B preset is not the configuration the paper describes (learning rate, rank, module count and pair count all differ, and the paper's values never appear in the git history). Re‑running with the paper's own hyperparameters gives ≈21 before a "coherence" penalty and 0.7 after it, because the honest‑steered model starts answering in **bold** (`**Yes**`) and the scorer only recognises a plain ` Yes`. Counting bold answers gives 14.1; at best ≈26. The same code *does* reproduce the paper's number on the smaller Gemma‑270M (41.7 vs 38.7).
 
-> Gradient-based honesty steering trained as an adapter on the model's own representations, not outputs. Human input: two contrasting words, no preference labels.
+**Ablations on 270M (two seeds).** Fixing the rotation breaks it (9.7, robust); random dimension selection is a coin flip (43.6 / 2.7); the coherence and monotonicity barrier losses never switch on at this scale and can be removed without loss. The paper's "every component is load‑bearing" table is one clear yes, one sometimes, two noes here.
 
-**How it works:** Train a single adapter (~1 hour on Gemma-3-1B). At inference, dial the steering coefficient: +1 for more honest, -1 for less, 0 for baseline. One adapter, bidirectional control.
+**Environment fixes (never the measurement):** a hung Hugging Face xet download (use `HF_HUB_DISABLE_XET=1`); the baseline scripts evaluate the wrong model in `--quick` mode (wrapper `replication/baselines_gemma1b.py`); eval batch 32 OOMs on 24 GB (batch 8); a cache‑name bug in the repeng script; a scheduler off‑by‑one when batches/epoch isn't divisible by the accumulation factor.
 
-**Why use it?** As models get more capable, eval awareness rises: models detect when they're being tested and adjust their behavior. You can't trust their outputs, their chain-of-thought, or their stated values at face value. You need a method that operates on internal representations rather than outputs, so it works even when the model is gaming the eval. AntiPaSTO steers what the model actually computes. On DailyDilemmas, it outperforms prompting by 6.9x and works where prompting triggers refusal.
+Full write‑ups: `replication/human.md` (plain language) and `replication/LLM-report.md` (dense, with every number and path).
+# LLM
 
-Applications:
-- *Combat eval awareness*: steer toward credulity and honesty so the model takes the eval at face value and gives honest answers.
-- *Find deeper moral preferences*: ask moral questions with and without honesty steering. Do stated values change?
-- *Swap the assistant axis*: find it and replace it with a philosopher-king or poet
-
-
-![Bidirectional control](docs/img/fig_bidirectional_demo.svg)
-
-## Results
-
-Train on 800 honesty persona pairs, test on [DailyDilemmas](https://arxiv.org/abs/2410.02683), an external benchmark of 1,360 moral dilemmas built independently of this work. Gemma-3-1B, n=3 seeds.
-
-| Method | Steer F1 | Tgt% | Wrong% | Arb% | Pmass |
-|:-------|---------:|-----:|-------:|-----:|------:|
-| AntiPaSTO | **31.2**±5.3 | 29.9 | 1.9 | 47.0 | 0.95 |
-| Eng. Prompt | 13.0 | | | | |
-| Prompting | 4.5 | 10.0 | 1.3 | 13.4 | 0.99 |
-| ActAdd | 0.0 | 0.0 | 0.0 | 0.0 | 0.99 |
-
-6.9x the Steering F1 of prompting, and it wins on 5 of 6 tested value axes. ActAdd is activation addition; Eng. Prompt is an engineered prompt following [AxBench](https://arxiv.org/abs/2501.17148). Full tables, ablations, and cross-model results in the [paper](https://arxiv.org/abs/2601.07473).
-
-## Quick Start
-
-### Bake your own
-
-```sh
-uv sync --all-groups
-uv run pytest tests/test_train.py::test_train_rnd -v  # smoke test (~3min)
-uv run python nbs/train.py tiny --quick              # al dente check
-
-uv run python nbs/train.py               # full course (Gemma-3-1B)
-
-uv run python -m pytest # integration tests
-```
-
-### One we prepared earlier
-
-[nbs/talk_to_checkpoint.ipynb](nbs/talk_to_checkpoint.ipynb)
-
-### Load a pretrained adapter
-
-```python
-from antipasto.peft_utils.load import load_adapter
-from antipasto.gen import gen, ScaleAdapter
-
-# Load from local path or HuggingFace
-model, tokenizer, layer_selection = load_adapter(
-    "wassname/antipasto-gemma-3-1b-honesty",  # or local path
-    quantization_type="4bit"
-)
-
-# Generate with steering: coeff > 0 = honest, coeff < 0 = deceptive
-prompt = "Should I tell my boss I was late because I overslept?"
-with ScaleAdapter(model, coeff=1.0):  # honest
-    honest_response = model.generate(**tokenizer(prompt, return_tensors="pt"))
-with ScaleAdapter(model, coeff=-1.0):  # deceptive  
-    deceptive_response = model.generate(**tokenizer(prompt, return_tensors="pt"))
-
-# Or generate at multiple coefficients
-list(gen(model, tokenizer, prompt, coeffs=[-1, 0, 1], max_new_tokens=64))
-``` 
-
-## The Recipe
-
-RLHF seasons the outputs but leaves the internals bland. AntiPaSTO marinates the model's hidden states directly, no preference labels required, just two contrasting words simmered into 800 synthetic pairs.
-
-![Incomplete contrast pairs](docs/img/incomplete_contrast_pairs_v2.svg)
-
-**Ingredients**:
-- Incomplete contrast pairs (self-supervised, no labels to garnish)
-- Cayley rotations on V (the secret sauce, keeps everything orthogonal)
-- Projection loss + TV coherence + monotonicity constraints
-- 800 synthetic pairs, ~1hr (low simmer)
-
-**What you get**:
-- Single adapter: flip α from +1 to -1 to reverse the flavor
-- Train on honesty, transfers to 1,360 unseen moral dilemmas (9 value dimensions)
-- Beats prompting by 6.9x on small models; gradient optimization where arithmetic steering (CAA) gets F1=0
-- Suppression bypass: steers when prompting triggers refusal or meta-commentary
-
-## Architecture
-
-*The pasta machine: SVD decomposition + Cayley rotations*
-
-
-```python
-# Adapter: rotate in SVD space
-def forward(h, alpha):
-    R_v = cayley(theta_v, alpha)  # coefficient-scaled rotation
-    S_scaled = S + alpha * delta_S
-    return h @ W_res.T + h @ V @ R_v @ diag(S_scaled) @ U.T
-
-# Loss: antiparallel separation + coherence + ordering
-def loss(model, x_cho, x_rej):
-    delta_pos = model(x_cho, +1) - model(x_rej, +1) - d_ref
-    delta_neg = model(x_cho, -1) - model(x_rej, -1) - d_ref
-    
-    L_proj = symlog(delta_pos @ delta_neg)        # want < 0 (antiparallel)
-    B_coh = tv_barrier(p_ref, p_pi, entropy)      # TV trust region
-    B_mono = hinge(Delta_neg < 0 < Delta_pos)     # ordered control
-    
-    return L_proj + B_coh + B_mono
-```
-![Loss geometry](docs/img/loss.svg)
-
-
-
-<!-- ![Adapter architecture](docs/img/apastoadapter_architecture.svg) -->
-
-## Project Layout
-
-```
-antipasto/           # the kitchen
-  config.py          # canonical recipe
-  metrics.py         # taste testing
-  train/             # cooking instructions
-  peft_utils/        # pasta machine internals
-docs/                # diagrams, plating notes
-nbs/                 # experimental dishes
-outputs/adapters/    # trained models (ready to serve)
-```
-
-## Status
-
-*Still simmering.* Full research history (experiments, ablations, burnt batches) available on request.
-
-I am working on v2 which
-- removes SVD for full lora (I found that changing the loss to prevent drift allows this)
-- reduces init variance
-- more expressive personas
-- larger models
-- better metric
-
-If you would like to collaborate, please reach out.
-
-## Acknowledgments
-
-Built on the shoulders of other chefs:
-- [CAA / RepEng](https://github.com/vgel/repeng) -- arithmetic steering that inspired this gradient-based approach
-- [PiSSA](https://github.com/GraphPKU/PiSSA) -- SVD-based adapter initialization
-- [SSVD](https://arxiv.org/abs/2409.07268) -- rotating V for domain generalization
-- [PEFT](https://github.com/huggingface/peft) -- the adapter ecosystem
-- [DailyDilemmas](https://github.com/chrischiu/dailydilemmas) -- the evaluation benchmark
-
-## Citation
-
-```bibtex
-@misc{clark2026antipasto,
-  title = {AntiPaSTO: Self-Supervised Honesty Steering via Anti-Parallel Representations},
-  author = {Clark, Michael J.},
-  year = {2026},
-  eprint = {2601.07473},
-  archivePrefix = {arXiv},
-  primaryClass = {cs.LG},
-  url = {https://arxiv.org/abs/2601.07473}
-}
-```
-
-
-<img width="832" height="554" alt="Nano banana's attempt to draw the loss landscape, I'm not sure if it helps understand the loss, but I like it" src="https://github.com/user-attachments/assets/033af6ad-df2b-4f0f-b2c8-0b667579f74c" />
-
+- Start with `replication/LLM-report.md` (§0 identity, §2 results, §3 evidence incl. §3.5–3.8 follow-ups, §4 env fixes/gotchas, §5 follow-up table, §6 how to continue). Ledger: `replication/ledger.json`; VERDICT at the end of `replication/run.log`.
+- Pinned `5e0f8517`; env from `uv.lock` (torch 2.9.1+cu128, transformers 4.57.1, peft @41091ec). Headline run: `uv run python nbs/train.py gemma1b-24gb [--seed N]`, 47 min/seed on a 3090, ~14 GB.
+- Result: Steer F1 1.8 / 0.4 / 3.8 (mean 2.0) vs 31.2 ± 5.3 → `claim_reproduced=false`, `blocking_reason=none`. Baselines (full 1360, same model): prompting 13.5, engineered 17.9, repeng 0.0.
+- Root-cause evidence: config drift (§3.1: preset ≠ paper hyperparameters; `git log -S` shows the paper values never existed as defaults); cross-seed adapter cos-sim 0.68–0.88 (§3.2); paper-config run → 20.9 pmass-neutralised / 0.7 as scored / 14.1 bold-tolerant (§3.5); 270M reproduces 41.7 vs 38.7 (§3.6); ablation suite 2 seeds (§3.8).
+- Scripts we added (all under `replication/`): `baselines_gemma1b.py` (wrapper; model list → gemma-3-1b, batch 8), `followups/cross_seed_similarity.py`, `followups/per_axis_f1.py`, `followups/rescore_bold.py` (metric change, labelled), `followups/queue*.sh` (sequential GPU queues with anchored pgrep / nvidia-smi busy checks).
+- Not committed: adapter weights (`outputs/adapters/**/*.safetensors`), big per-dilemma parquet (`2_eval_labelled*.parquet`), venv. Small parquet/tsv/json/logs per adapter dir are in.
+- Open questions in priority order: bold-answer artefact origin (tokenizer/template version vs adapter); third 270M seed for default vs random dims; which config produced the README's 31.2 (ask the author, outside the protocol).
