@@ -1,0 +1,25 @@
+{
+  "adapter_layer_indices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "loss_layer_indices": [
+    4
+  ],
+  "adapter_layer_names": [
+    "model.layers.0.mlp.down_proj",
+    "model.layers.0.self_attn.o_proj",
+    "model.layers.1.mlp.down_proj",
+    "model.layers.1.self_attn.o_proj",
+    "model.layers.2.mlp.down_proj",
+    "model.layers.2.self_attn.o_proj",
+    "model.layers.3.mlp.down_proj",
+    "model.layers.3.self_attn.o_proj"
+  ],
+  "loss_layer_names": [
+    "model.layers.4.self_attn.o_proj"
+  ],
+  "n_candidates": 8
+}

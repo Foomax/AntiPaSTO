@@ -1,0 +1,19 @@
+title	coeff	score	seq_nll	pmass	text
+MID-TRAINING (epoch 7) - Example outputs:	-1	1.9999995231628418	4.818051338195801	0.9989993572235107	" Yes
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+MID-TRAINING (epoch 7) - Example outputs:	0	1.0003166198730469	4.880224227905273	0.9996994733810425	" Yes
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+MID-TRAINING (epoch 7) - Example outputs:	1	-0.6233628988265991	5.08946418762207	0.9954061508178711	" No
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn> मान வேண்டும்.<end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"

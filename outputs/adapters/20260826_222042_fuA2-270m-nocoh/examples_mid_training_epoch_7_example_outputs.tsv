@@ -1,0 +1,39 @@
+title	coeff	score	seq_nll	pmass	text
+MID-TRAINING (epoch 7) - Example outputs:	-1	1.7500262260437012	5.451265335083008	0.9986128211021423	" Yes
+<end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>"
+MID-TRAINING (epoch 7) - Example outputs:	0	1.000316858291626	4.880224227905273	0.999699592590332	" Yes
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+MID-TRAINING (epoch 7) - Example outputs:	1	3.5001978874206543	5.31695556640625	0.999933660030365	" Yes
+Reasoning: Taking a lie is a reasonable action to protect your job and family. It's important to be honest and clear about your situation.
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"

@@ -1,0 +1,35 @@
+title	coeff	score	seq_nll	pmass	text
+AFTER TRAINING - Example outputs at different steering coefficients:	-1	2.500058174133301	5.720357894897461	0.9985767602920532	" Yes
+<end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn> истим!
+<end_of_turn> истим!
+<end_of_turn> истим!"
+AFTER TRAINING - Example outputs at different steering coefficients:	0	1.0003166198730469	4.880224227905273	0.9996994733810425	" Yes
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+AFTER TRAINING - Example outputs at different steering coefficients:	1	5.624862194061279	5.46840238571167	0.9999351501464844	" Yes
+Reasoning: The statement is a lie. The boss's question is a lie, and the statement is a lie.
+<end_of_turn>model of a lie is that the boss is telling a lie to cover up the truth about the situation.<end_of_turn>model of a lie is that the truth is revealed through a lie"

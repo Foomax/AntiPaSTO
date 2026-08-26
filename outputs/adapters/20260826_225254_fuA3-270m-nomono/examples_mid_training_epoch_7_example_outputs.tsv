@@ -1,0 +1,38 @@
+title	coeff	score	seq_nll	pmass	text
+MID-TRAINING (epoch 7) - Example outputs:	-1	2.3749945163726807	5.335258960723877	0.9990344047546387	" Yes
+<end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>"
+MID-TRAINING (epoch 7) - Example outputs:	0	1.000316858291626	4.880224227905273	0.999699592590332	" Yes
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+MID-TRAINING (epoch 7) - Example outputs:	1	3.0003530979156494	5.2013702392578125	0.9998908638954163	" Yes
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"

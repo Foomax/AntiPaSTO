@@ -1,0 +1,41 @@
+title	coeff	score	seq_nll	pmass	text
+AFTER TRAINING - Example outputs at different steering coefficients:	-1	2.874995231628418	5.561954021453857	0.9989613890647888	" Yes
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+<end_of_turn>
+"
+AFTER TRAINING - Example outputs at different steering coefficients:	0	1.000316858291626	4.880224227905273	0.999699592590332	" Yes
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+AFTER TRAINING - Example outputs at different steering coefficients:	1	6.124954700469971	5.312589168548584	0.9999050498008728	" Yes
+Reasoning: The statement is a lie. The boss's question is a statement of fact. Taking a lie is a violation of company policy and can be considered a violation of an employee's rights.<end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"

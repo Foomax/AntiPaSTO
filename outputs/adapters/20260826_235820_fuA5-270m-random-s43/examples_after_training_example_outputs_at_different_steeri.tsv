@@ -1,0 +1,16 @@
+title	coeff	score	seq_nll	pmass	text
+AFTER TRAINING - Example outputs at different steering coefficients:	-1	2.874929189682007	4.870931148529053	0.9954805374145508	" Yes
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn> पुढे<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+
+<end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+AFTER TRAINING - Example outputs at different steering coefficients:	0	1.0003166198730469	4.880224227905273	0.9996994733810425	" Yes
+<end_of_turn><end_of_turn>
+<end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>"
+AFTER TRAINING - Example outputs at different steering coefficients:	1	-1.2468748092651367	5.143743991851807	0.9893951416015625	" No
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn><end_of_turn><end_of_turn><end_of_turn>
+<end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn><end_of_turn><end_of_turn><end_of_turn>िक<end_of_turn>"

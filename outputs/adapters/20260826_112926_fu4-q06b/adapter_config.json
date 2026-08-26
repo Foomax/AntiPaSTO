@@ -1,0 +1,17 @@
+{
+  "alpha": 1.0,
+  "auto_mapping": null,
+  "base_model_name_or_path": "Qwen/Qwen3-0.6B",
+  "inference_mode": false,
+  "max_rotation_angle": 0.7853981633974483,
+  "modules_to_save": null,
+  "peft_type": "APASTOADAPTER",
+  "peft_version": null,
+  "r": 64,
+  "revision": null,
+  "rotate_u": false,
+  "rotate_v": true,
+  "rotation_method": "cayley",
+  "target_modules": ".*(\\.10\\..*down_proj|\\.10\\..*o_proj|\\.11\\..*down_proj|\\.11\\..*o_proj|\\.12\\..*down_proj|\\.12\\..*o_proj|\\.13\\..*down_proj|\\.13\\..*o_proj|\\.14\\..*down_proj|\\.14\\..*o_proj|\\.15\\..*down_proj|\\.15\\..*o_proj|\\.16\\..*down_proj|\\.16\\..*o_proj|\\.17\\..*down_proj|\\.17\\..*o_proj|\\.18\\..*down_proj|\\.18\\..*o_proj|\\.19\\..*down_proj|\\.19\\..*o_proj|\\.2\\..*down_proj|\\.2\\..*o_proj|\\.20\\..*down_proj|\\.20\\..*o_proj|\\.21\\..*down_proj|\\.21\\..*o_proj|\\.22\\..*down_proj|\\.22\\..*o_proj|\\.23\\..*down_proj|\\.23\\..*o_proj|\\.24\\..*down_proj|\\.24\\..*o_proj|\\.3\\..*down_proj|\\.3\\..*o_proj|\\.4\\..*down_proj|\\.4\\..*o_proj|\\.5\\..*down_proj|\\.5\\..*o_proj|\\.6\\..*down_proj|\\.6\\..*o_proj|\\.7\\..*down_proj|\\.7\\..*o_proj|\\.8\\..*down_proj|\\.8\\..*o_proj|\\.9\\..*down_proj|\\.9\\..*o_proj)",
+  "task_type": "CAUSAL_LM"
+}
